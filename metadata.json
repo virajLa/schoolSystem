@@ -1,0 +1,6 @@
+{
+  "name": "SchoolFlow",
+  "description": "Comprehensive school operations system for lesson planning, multi-level approval workflows, leave management, audit logs, and reports with automated retention policy.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
