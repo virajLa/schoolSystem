@@ -10,6 +10,8 @@ import {
   Users,
   ShieldCheck,
   TrendingUp,
+  LogOut,
+  X,
 } from 'lucide-react';
 
 interface SidebarProps {
@@ -17,6 +19,9 @@ interface SidebarProps {
   activeTab: string;
   onSelectTab: (tab: string) => void;
   pendingApprovalsCount: number;
+  onLogout: () => void;
+  isMobileOpen?: boolean;
+  onCloseMobile?: () => void;
 }
 
 export const Sidebar: React.FC<SidebarProps> = ({
@@ -24,6 +29,9 @@ export const Sidebar: React.FC<SidebarProps> = ({
   activeTab,
   onSelectTab,
   pendingApprovalsCount,
+  onLogout,
+  isMobileOpen = false,
+  onCloseMobile,
 }) => {
   const isApprover = [
     'Principal',
@@ -54,13 +62,30 @@ export const Sidebar: React.FC<SidebarProps> = ({
   });
 
   return (
-    <aside className="w-full lg:w-64 bg-slate-900 text-slate-300 lg:min-h-[calc(100vh-4rem)] flex flex-col border-r border-slate-800">
-      <div className="p-4 border-b border-slate-800 flex flex-col gap-1">
-        <span className="text-3xs uppercase font-extrabold tracking-widest text-emerald-400 font-display">Authorized Sector</span>
-        <div className="flex items-center gap-2">
-          <div className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
-          <span className="text-xs font-bold text-slate-100 truncate font-display">{userRole}</span>
+    <aside
+      className={`fixed lg:static inset-y-0 left-0 z-50 w-64 bg-slate-900 text-slate-300 flex flex-col border-r border-slate-800 transition-transform duration-300 transform ${
+        isMobileOpen ? 'translate-x-0' : '-translate-x-full'
+      } lg:translate-x-0 lg:min-h-[calc(100vh-4rem)] lg:flex`}
+    >
+      <div className="p-4 border-b border-slate-800 flex items-center justify-between">
+        <div className="flex flex-col gap-1 overflow-hidden">
+          <span className="text-3xs uppercase font-extrabold tracking-widest text-emerald-400 font-display">Authorized Sector</span>
+          <div className="flex items-center gap-2">
+            <div className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
+            <span className="text-xs font-bold text-slate-100 truncate font-display">{userRole}</span>
+          </div>
         </div>
+        {onCloseMobile && (
+          <button
+            type="button"
+            id="btn-close-mobile-sidebar"
+            onClick={onCloseMobile}
+            className="lg:hidden p-1.5 text-slate-400 hover:text-slate-100 bg-slate-800/50 hover:bg-slate-800 rounded-lg cursor-pointer transition-colors"
+            aria-label="Close navigation menu"
+          >
+            <X className="h-4.5 w-4.5" />
+          </button>
+        )}
       </div>
 
       <nav className="flex-1 p-3 space-y-1">
@@ -92,10 +117,17 @@ export const Sidebar: React.FC<SidebarProps> = ({
         })}
       </nav>
 
-      {/* Static environment banner - NO terminal bloat / credits. Clean info. */}
-      <div className="p-4 border-t border-slate-800 text-3xs text-slate-500">
+      {/* Sidebar Logout Action */}
+      <div className="p-4 border-t border-slate-800 text-3xs text-slate-500 flex flex-col gap-2">
         <p className="font-bold text-slate-400 font-display uppercase tracking-wider">SchoolFlow Core</p>
-        <p className="mt-0.5 text-slate-600">Vite + React 19 Workspace</p>
+        <button
+          id="btn-sidebar-logout"
+          onClick={onLogout}
+          className="w-full flex items-center gap-2.5 px-3 py-2 text-xs text-rose-400 hover:text-rose-300 hover:bg-slate-800/60 rounded-lg transition-colors font-semibold cursor-pointer text-left"
+        >
+          <LogOut className="h-4 w-4 text-rose-400" />
+          <span>Log Out</span>
+        </button>
       </div>
     </aside>
   );

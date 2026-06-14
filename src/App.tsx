@@ -78,6 +78,7 @@ export default function App() {
   const [activeTab, setActiveTab] = useState<string>('dashboard');
   const [printTargetPlan, setPrintTargetPlan] = useState<LessonPlan | null>(null);
   const [printTargetVersion, setPrintTargetVersion] = useState<string | undefined>(undefined);
+  const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
 
   // Synchronize dynamic updates back to local storage
   useEffect(() => {
@@ -474,13 +475,26 @@ export default function App() {
         onReset={resetAllData}
         notifications={notifications}
         clearNotifications={() => setNotifications([])}
+        onToggleSidebar={() => setIsMobileSidebarOpen(!isMobileSidebarOpen)}
       />
 
-      <div className="flex-1 flex flex-col lg:flex-row">
+      <div className="flex-1 flex flex-col lg:flex-row relative">
+        {/* Mobile Sidebar backdrop blur overlay */}
+        {isMobileSidebarOpen && (
+          <div
+            id="sidebar-mobile-overlay"
+            className="fixed inset-0 bg-slate-900/50 backdrop-blur-xs z-40 lg:hidden cursor-pointer"
+            onClick={() => setIsMobileSidebarOpen(false)}
+          />
+        )}
+
         <Sidebar
           userRole={activeUser.role}
           activeTab={activeTab}
-          onSelectTab={setActiveTab}
+          onSelectTab={(tab) => {
+            setActiveTab(tab);
+            setIsMobileSidebarOpen(false); // Clean up mobile drawer after click
+          }}
           pendingApprovalsCount={
             plans.filter(
               (p) =>
@@ -488,6 +502,9 @@ export default function App() {
                 allUsers.find((u) => u.id === p.teacherId)?.assignedOfficerId === activeUser.id
             ).length
           }
+          onLogout={handleLogout}
+          isMobileOpen={isMobileSidebarOpen}
+          onCloseMobile={() => setIsMobileSidebarOpen(false)}
         />
 
         <main className="flex-1 p-4 lg:p-8 max-w-7xl mx-auto w-full">

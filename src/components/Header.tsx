@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { User } from '../types';
-import { Bell, RefreshCw, GraduationCap, LogOut, Shield } from 'lucide-react';
+import { Bell, RefreshCw, GraduationCap, LogOut, Shield, Menu } from 'lucide-react';
 
 interface HeaderProps {
   currentUser: User;
@@ -8,6 +8,7 @@ interface HeaderProps {
   onReset: () => void;
   notifications: string[];
   clearNotifications: () => void;
+  onToggleSidebar?: () => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({
@@ -16,6 +17,7 @@ export const Header: React.FC<HeaderProps> = ({
   onReset,
   notifications,
   clearNotifications,
+  onToggleSidebar,
 }) => {
   const [showProfileMenu, setShowProfileMenu] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
@@ -26,6 +28,15 @@ export const Header: React.FC<HeaderProps> = ({
         <div className="flex justify-between items-center h-16">
           {/* Brand Logo and Title */}
           <div className="flex items-center gap-3">
+            <button
+              type="button"
+              id="btn-mobile-menu-toggle"
+              onClick={onToggleSidebar}
+              className="lg:hidden p-2 -ml-2 text-slate-500 hover:text-slate-700 hover:bg-slate-100 rounded-lg cursor-pointer transition-colors"
+              aria-label="Toggle navigation menu"
+            >
+              <Menu className="h-5.5 w-5.5" />
+            </button>
             <div className="bg-emerald-600 text-white p-2 rounded-xl shadow-md shadow-emerald-100 flex items-center justify-center">
               <GraduationCap className="h-6 w-6" id="logo-icon" />
             </div>
@@ -35,11 +46,7 @@ export const Header: React.FC<HeaderProps> = ({
             </div>
           </div>
 
-          {/* Secure Environment Flag Indicator */}
-          <div className="hidden sm:flex items-center gap-2 bg-emerald-50 border border-emerald-150 px-3 py-1 rounded-full text-xs">
-            <div className="h-1.5 w-1.5 rounded-full bg-emerald-600 animate-pulse" />
-            <span className="text-emerald-900 font-bold text-3xs uppercase tracking-wider">Secure Database Connected</span>
-          </div>
+
 
           {/* Right Side Options */}
           <div className="flex items-center gap-4">
