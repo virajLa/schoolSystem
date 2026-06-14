@@ -418,6 +418,32 @@ export default function App() {
     setNotifications((prev) => [`Assigned Officer mapping successfully locked: ${teacher?.name} -> ${officer?.name || 'None'}`, ...prev]);
   };
 
+  // 4b. USER LOGIN MANAGEMENT (SUPER ADMIN SEAT CONTROLS)
+  const handleAddUser = (user: User) => {
+    setAllUsers((prev) => [...prev, user]);
+    writeLog('System Configuration Changes', 'User Login Creation', user.id, `Created new User login for: "${user.name}" (${user.role}) with email "${user.email}"`);
+    setNotifications((prev) => [`Successfully created new user account: ${user.name}`, ...prev]);
+  };
+
+  const handleUpdateUser = (userId: string, updatedFields: Partial<User>) => {
+    setAllUsers((prev) =>
+      prev.map((user) => (user.id === userId ? { ...user, ...updatedFields } : user))
+    );
+    writeLog('System Configuration Changes', 'User Login Modification', userId, `Modified login configuration for user ID: ${userId}`);
+    setNotifications((prev) => [`User configurations successfully updated.`, ...prev]);
+  };
+
+  const handleDeleteUser = (userId: string) => {
+    if (activeUser && activeUser.id === userId) {
+      setNotifications((prev) => [`Error: You cannot delete your own active administrator account.`, ...prev]);
+      return;
+    }
+    const userToDelete = allUsers.find((u) => u.id === userId);
+    setAllUsers((prev) => prev.filter((user) => user.id !== userId));
+    writeLog('System Configuration Changes', 'User Login Deletion', userId, `Deleted User login: "${userToDelete?.name || userId}" (${userToDelete?.role || ''})`);
+    setNotifications((prev) => [`Successfully deleted user workspace: ${userToDelete?.name || 'User'}`, ...prev]);
+  };
+
   // 5. COMPLIANCE CLEANUP FOR 3-YEAR DELETION MANDATES
   const handleTriggerCleanup = () => {
     // Threshold date - exactly 3 years prior to now
@@ -576,6 +602,9 @@ export default function App() {
               currentUser={activeUser}
               allUsers={allUsers}
               onUpdateOfficerMapping={handleUpdateOfficerMapping}
+              onAddUser={handleAddUser}
+              onUpdateUser={handleUpdateUser}
+              onDeleteUser={handleDeleteUser}
             />
           )}
 
